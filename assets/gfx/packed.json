@@ -1,0 +1,125 @@
+{
+	"textures": [
+		{
+			"image": "packed.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 256,
+				"h": 256
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "player_2",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 13,
+						"w": 119,
+						"h": 98
+					},
+					"frame": {
+						"x": 2,
+						"y": 2,
+						"w": 119,
+						"h": 98
+					}
+				},
+				{
+					"filename": "player_1",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 14,
+						"w": 119,
+						"h": 97
+					},
+					"frame": {
+						"x": 124,
+						"y": 2,
+						"w": 119,
+						"h": 97
+					}
+				},
+				{
+					"filename": "sky",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 1,
+						"h": 8
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 1,
+						"h": 8
+					},
+					"frame": {
+						"x": 246,
+						"y": 2,
+						"w": 1,
+						"h": 8
+					}
+				},
+				{
+					"filename": "void",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 1,
+						"h": 1
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 1,
+						"h": 1
+					},
+					"frame": {
+						"x": 250,
+						"y": 2,
+						"w": 1,
+						"h": 1
+					}
+				},
+				{
+					"filename": "player_0",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 16,
+						"w": 119,
+						"h": 95
+					},
+					"frame": {
+						"x": 124,
+						"y": 102,
+						"w": 119,
+						"h": 95
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:6353c6e31a5d2d745eb0ad7ceca75e28:df12306748fd5cfebdd243b6696b95d0:de62c4130a72712ae995d05d7f4a14e5$"
+	}
+}

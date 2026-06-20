@@ -1,0 +1,31 @@
+{
+    "name": "game-starter",
+    "version": "0.0.1",
+    "description": "Simple starter template for PhaserJS + TypeScript based games / animations",
+    "type": "module",
+    "author": "Benjamin Vincent Schulenburg <bennyschulenburg@gmx.de>",
+    "license": "Unlicense",
+    "packageManager": "pnpm@11.3.0",
+    "engines": {
+        "node": ">=24",
+        "pnpm": ">=10"
+    },
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview",
+        "format": "biome format --write ./src",
+        "lint": "biome ci ./src",
+        "lint:fix": "biome check --write ./src",
+        "check": "tsc -p ./tsconfig.json --noEmit",
+        "pack_textures": "TexturePacker ./texture_packer.tps",
+        "zip": "pnpm build && zip -r ld-itch-compatible.zip dist/"
+    },
+    "devDependencies": {
+        "typescript": "latest",
+        "vite": "latest"
+    },
+    "dependencies": {
+        "phaser": "latest"
+    }
+}

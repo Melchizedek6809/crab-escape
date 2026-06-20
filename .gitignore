@@ -1,0 +1,7 @@
+assets/bgm/
+
+*.zip
+*.tiled-session
+shell.nix
+**/node_modules/
+dist/
