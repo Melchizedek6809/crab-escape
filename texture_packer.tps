@@ -4,7 +4,7 @@
         <key>fileFormatVersion</key>
         <int>6</int>
         <key>texturePackerVersion</key>
-        <string>7.0.0</string>
+        <string>8.0.1</string>
         <key>autoSDSettings</key>
         <array>
             <struct type="AutoSDSettings">
@@ -144,6 +144,8 @@
         <true/>
         <key>trimSpriteNames</key>
         <true/>
+        <key>enableCacheBusting</key>
+        <false/>
         <key>prependSmartFolderName</key>
         <false/>
         <key>autodetectAnimations</key>
@@ -173,9 +175,10 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
-            <key type="filename">assets/unpacked_gfx/player_0.png</key>
-            <key type="filename">assets/unpacked_gfx/player_1.png</key>
-            <key type="filename">assets/unpacked_gfx/player_2.png</key>
+            <key type="filename">assets/unpacked_gfx/crab_0.png</key>
+            <key type="filename">assets/unpacked_gfx/crab_sleep_0.png</key>
+            <key type="filename">assets/unpacked_gfx/crab_with_key_0.png</key>
+            <key type="filename">assets/unpacked_gfx/crab_with_key_sleep_0.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -184,13 +187,19 @@
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>32,32,64,64</rect>
+                <rect>32,16,64,32</rect>
                 <key>scale9Paddings</key>
-                <rect>32,32,64,64</rect>
+                <rect>32,16,64,32</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">assets/unpacked_gfx/sky.png</key>
+            <key type="filename">assets/unpacked_gfx/diagonal.png</key>
+            <key type="filename">assets/unpacked_gfx/door.png</key>
+            <key type="filename">assets/unpacked_gfx/exit.png</key>
+            <key type="filename">assets/unpacked_gfx/floor.png</key>
+            <key type="filename">assets/unpacked_gfx/key.png</key>
+            <key type="filename">assets/unpacked_gfx/start.png</key>
+            <key type="filename">assets/unpacked_gfx/wall.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -199,9 +208,9 @@
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>1,8,2,16</rect>
+                <rect>16,16,32,32</rect>
                 <key>scale9Paddings</key>
-                <rect>1,8,2,16</rect>
+                <rect>16,16,32,32</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>

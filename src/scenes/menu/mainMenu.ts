@@ -1,9 +1,14 @@
 import { Scene } from 'phaser';
 import options from '../../options';
 
-const introHTML = `<h1>Vite / Phaser / TypeScript starter template</h1>
+const introHTML = `<h1>Crab Escape</h1>
 <br/>
-<p>Something I've built for myself to jumpstart games developed for jams, feel free to use it howevery you want.</p>`;
+<p>Help these crabs escape</p>
+<br/>
+<p>Arrow keys = move</p>
+<p>Space = switch crabs</p>
+<p>R = restart level</p>
+`;
 
 const gitHubLink = 'https://github.com/Melchizedek6809/game-starter';
 const phaserLink = 'https://phaser.io/';

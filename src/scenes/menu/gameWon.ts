@@ -1,5 +1,4 @@
 import { Scene } from 'phaser';
-import type { GameScene } from '../game/gameScene';
 
 export class GameWonScene extends Scene {
     gamepadWasUnpressed = false;
@@ -18,15 +17,12 @@ export class GameWonScene extends Scene {
     }
 
     create() {
-        const gs = this.scene.get('GameScene') as GameScene;
-        const score = gs.score;
         this.gamepadWasUnpressed = false;
 
         const $dom = document.createElement('div');
         $dom.style.textAlign = 'center';
         $dom.innerHTML = `<h1>Congratulations</h1>
         <h2>You won!</h2>
-        <h2>Your final Score: ${score}</h2>
         <h2>Thank you for playing my game, I hope you had fun :)</h2>
         <br/><br/>
         <button class="green-button">Start over</button>`;
