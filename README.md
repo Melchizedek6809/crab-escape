@@ -2,6 +2,10 @@
 
 A puzzle game for the Trijam #377, theme was crabs so my idea was a puzzle game where you need to help crabs that can only move sideways escape.
 
+## Attribution
+
+Code was mostly Claude working from a template I made for doing Phaser games with Vite, maps/gfx/gameplay was myself and SFX/BGM are from [OtoLogic.jp](https://otologic.jp/).
+
 ## Requirements
 - Node JS (v24+) with PNPM
 
