@@ -8,7 +8,7 @@ const introHTML = `<h1>Crab Escape</h1>
 <p>Arrow keys = move</p>
 <p>Space = switch crabs</p>
 <p>R = restart level</p>
-<p>The fantastic BGM/SFX are from <a href="https://otologic.jp/">OtoLogic</a></p>
+<p>The fantastic BGM/SFX are from <a href="https://otologic.jp/" target="_blank">OtoLogic.jp</a></p>
 `;
 
 const gitHubLink = 'https://github.com/Melchizedek6809/game-starter';
