@@ -1,3 +1,5 @@
+![Poster](./poster.png)
+
 # Crab Escape
 
 A puzzle game for the Trijam #377, theme was crabs so my idea was a puzzle game where you need to help crabs that can only move sideways escape.
