@@ -1,7 +1,7 @@
 {
-    "name": "game-starter",
+    "name": "crab-escape",
     "version": "0.0.1",
-    "description": "Simple starter template for PhaserJS + TypeScript based games / animations",
+    "description": "Puzzle game for Trijam",
     "type": "module",
     "author": "Benjamin Vincent Schulenburg <bennyschulenburg@gmx.de>",
     "license": "Unlicense",

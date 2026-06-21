@@ -4,6 +4,10 @@ import level1 from '../../../assets/maps/1.json';
 import level2 from '../../../assets/maps/2.json';
 import level3 from '../../../assets/maps/3.json';
 import level4 from '../../../assets/maps/4.json';
+import level5 from '../../../assets/maps/5.json';
+import level6 from '../../../assets/maps/6.json';
+import level7 from '../../../assets/maps/7.json';
+import options from '../../options';
 import type { UIScene } from '../ui/uiScene';
 
 // A single tile layer as exported by Tiled with base64 encoding.
@@ -77,6 +81,8 @@ const MOVE_MS = 128;
 const MOVE_EASE = 'Cubic.easeOut';
 // While an arrow key is held, the crab keeps moving one tile every this long.
 const MOVE_REPEAT_MS = 128;
+// How long a crab takes to shrink away once it has slid onto the exit.
+const EXIT_SHRINK_MS = 240;
 
 // Wrap an angle (radians) into [-PI, PI], for picking the short way round.
 const wrapAngle = (a: number): number => {
@@ -110,12 +116,18 @@ const fetchLevel = (name: string): TiledMap => {
             return level3 as unknown as TiledMap;
         case '4':
             return level4 as unknown as TiledMap;
+        case '5':
+            return level5 as unknown as TiledMap;
+        case '6':
+            return level6 as unknown as TiledMap;
+        case '7':
+            return level7 as unknown as TiledMap;
         default:
             throw new Error(`Unknown level: ${name}`);
     }
 };
 
-const LEVEL_ORDER = ['1', '2', '3', '4'];
+const LEVEL_ORDER = ['1', '2', '3', '4', '5', '6', '7'];
 
 // Decode Tiled's base64 layer data into a flat array of gids (one uint32 each,
 // little-endian, row-major).
@@ -196,21 +208,13 @@ export class GameScene extends Scene {
             this.bgm = undefined;
         }
 
-        // If we have BGM we can use this to start the right track, depending on whether the menu is active or not.
-        /*
-        if (options.playBGM) {
-            if (
-                this.scene.isActive('MainMenuScene') &&
-                this.cache.audio.has('menubgm')
-            ) {
-                this.bgm = this.sound.add('menubgm', { loop: true });
-            }
-            if (!this.bgm && this.cache.audio.has('bgm')) {
-                this.bgm = this.sound.add('bgm', { loop: true });
-            }
-            this.bgm?.play();
+        // Start looping background music (browsers unlock audio on the first
+        // user input, so playback begins once the player interacts).
+        if (options.playBGM && this.cache.audio.has('bgm')) {
+            this.bgm = this.sound.add('bgm', { loop: true });
+            this.bgm.play();
         }
-        */
+
         const ui = this.scene.get('UIScene') as UIScene;
         ui.events.emit('reset');
 
@@ -231,9 +235,13 @@ export class GameScene extends Scene {
 
         this.createCrabAnims();
 
-        // A fresh start (initial boot or "Start over") always begins at the
-        // first level. R reloads the current level, completeLevel advances.
-        this.loadLevel(LEVEL_ORDER[0]);
+        // A fresh start (initial boot or "Start over") begins at the first
+        // level, or at ?level=<n> when given a valid level (handy for testing).
+        // R reloads the current level, completeLevel advances.
+        const start = LEVEL_ORDER.includes(options.startLevel)
+            ? options.startLevel
+            : LEVEL_ORDER[0];
+        this.loadLevel(start);
     }
 
     // Register the looping 2-frame animation for each crab state. Animations
@@ -412,9 +420,9 @@ export class GameScene extends Scene {
         });
     }
 
-    // Glide a crab around a corner: its sprite sweeps a quarter-arc around the
-    // diagonal cell (pivotX, pivotY) while rotating, so it visibly slides along
-    // the diagonal instead of cutting straight across it.
+    // Glide a crab around a corner along an L-path whose elbow is the diagonal
+    // cell (pivotX, pivotY): first it slides straight in (its current heading,
+    // no rotation), then it rotates as it slides out along the exit wall.
     private animateCrabAroundCorner(
         crab: Crab,
         pivotX: number,
@@ -422,16 +430,17 @@ export class GameScene extends Scene {
         onComplete?: () => void,
     ) {
         const t = this.crabTarget(crab);
-        const px = this.pixelX(pivotX) + this.tileWidth / 2;
-        const py = this.pixelY(pivotY) + this.tileHeight / 2;
+        // The elbow: the centre of the diagonal tile.
+        const ex = this.pixelX(pivotX) + this.tileWidth / 2;
+        const ey = this.pixelY(pivotY) + this.tileHeight / 2;
         const sx = crab.sprite.x;
         const sy = crab.sprite.y;
         const sr = crab.sprite.rotation;
-        const startRadius = Math.hypot(sx - px, sy - py);
-        const endRadius = Math.hypot(t.x - px, t.y - py);
-        const startAngle = Math.atan2(sy - py, sx - px);
-        const sweep = wrapAngle(Math.atan2(t.y - py, t.x - px) - startAngle);
         const spin = wrapAngle(t.rotation - sr);
+        // Split the timeline between the two legs in proportion to their length.
+        const inLen = Math.hypot(ex - sx, ey - sy);
+        const outLen = Math.hypot(t.x - ex, t.y - ey);
+        const split = inLen + outLen > 0 ? inLen / (inLen + outLen) : 0;
 
         const progress = { v: 0 };
         this.stopCrabTween(crab);
@@ -441,14 +450,24 @@ export class GameScene extends Scene {
             duration: MOVE_MS,
             ease: MOVE_EASE,
             onUpdate: () => {
-                const angle = startAngle + sweep * progress.v;
-                const radius =
-                    startRadius + (endRadius - startRadius) * progress.v;
-                crab.sprite.setPosition(
-                    px + Math.cos(angle) * radius,
-                    py + Math.sin(angle) * radius,
-                );
-                crab.sprite.setRotation(sr + spin * progress.v);
+                const v = progress.v;
+                if (v <= split) {
+                    // Leg 1: slide into the corner, keeping orientation.
+                    const k = split > 0 ? v / split : 1;
+                    crab.sprite.setPosition(
+                        sx + (ex - sx) * k,
+                        sy + (ey - sy) * k,
+                    );
+                    crab.sprite.setRotation(sr);
+                } else {
+                    // Leg 2: rotate while sliding out along the wall.
+                    const k = (v - split) / (1 - split);
+                    crab.sprite.setPosition(
+                        ex + (t.x - ex) * k,
+                        ey + (t.y - ey) * k,
+                    );
+                    crab.sprite.setRotation(sr + spin * k);
+                }
             },
             onComplete,
         });
@@ -505,7 +524,14 @@ export class GameScene extends Scene {
         if (!fresh && !(key.isDown && this.moveCooldown <= 0)) {
             return false;
         }
-        this.moveActiveCrab(dx, dy);
+        const crab = this.crabs[this.activeCrab];
+        const acted = this.moveActiveCrab(dx, dy);
+        // Bounce + thud when blocked, but only on a deliberate press so holding
+        // a key against a wall doesn't rattle.
+        if (!acted && fresh) {
+            this.playSfx('sfx_blocked');
+            this.bounceCrab(crab, dx, dy);
+        }
         this.moveCooldown = MOVE_REPEAT_MS;
         return true;
     }
@@ -522,7 +548,9 @@ export class GameScene extends Scene {
     // bumping into another crab rotates that crab out of the way if it has room.
     // Sliding onto a key picks it up. A crab that ends up on an exit tile is
     // considered home and removed; the level is won once the last crab leaves.
-    private moveActiveCrab(dx: number, dy: number) {
+    // Returns true if the press did something (moved or opened a door), false if
+    // it was blocked.
+    private moveActiveCrab(dx: number, dy: number): boolean {
         const crab = this.crabs[this.activeCrab];
         const nx = crab.x + dx;
         const ny = crab.y + dy;
@@ -537,19 +565,21 @@ export class GameScene extends Scene {
         // A diagonal redirects the crab around the corner rather than letting it
         // step onto the diagonal tile.
         if (this.isDiagonal(leadX, leadY)) {
-            if (this.slideAroundDiagonal(crab, leadX, leadY, dx, dy)) {
-                this.finishActiveMove(crab, (oc) =>
-                    this.animateCrabAroundCorner(crab, leadX, leadY, oc),
-                );
+            if (!this.slideAroundDiagonal(crab, leadX, leadY, dx, dy)) {
+                return false;
             }
-            return;
+            this.finishActiveMove(crab, (oc) =>
+                this.animateCrabAroundCorner(crab, leadX, leadY, oc),
+            );
+            return true;
         }
 
         if (!this.canOccupy(nx, ny, crab)) {
             if (crab.hasKey && this.isDoor(leadX, leadY)) {
                 this.setTile(leadX, leadY, GID.floor);
                 this.setCrabKey(crab, false);
-                return;
+                this.playSfx('sfx_door');
+                return true;
             }
             // If a crab is in the way, try to rotate it aside and move in behind
             // it; otherwise the move is blocked.
@@ -558,12 +588,16 @@ export class GameScene extends Scene {
                 !blocking ||
                 !this.rotateOutOfWay(blocking, leadX, leadY, dx, dy)
             ) {
-                return;
+                return false;
             }
+            // Pushed another crab into a rotation; the move sound still plays
+            // below for this crab's own step.
+            this.playSfx('sfx_push');
         }
         crab.x = nx;
         crab.y = ny;
         this.finishActiveMove(crab, (oc) => this.animateCrab(crab, oc));
+        return true;
     }
 
     // After the active crab's cells/orientation have been updated, pick up any
@@ -578,23 +612,63 @@ export class GameScene extends Scene {
             if (this.isKey(cx, cy)) {
                 this.setTile(cx, cy, GID.floor);
                 this.setCrabKey(crab, true);
+                this.playSfx('sfx_crab_exit');
             }
         }
 
         if (cells.some(([cx, cy]) => this.isExit(cx, cy))) {
-            // Let the crab finish its move onto the exit, then remove its sprite.
+            // Let the crab finish its move onto the exit, then pop out of sight.
             const sprite = crab.sprite;
-            animate(() => sprite.destroy());
+            animate(() => this.shrinkAway(sprite));
             this.crabs.splice(this.activeCrab, 1);
             if (this.crabs.length === 0) {
+                this.playSfx('sfx_level_complete');
                 this.completeLevel();
                 return;
             }
+            this.playSfx('sfx_crab_exit');
             this.activeCrab %= this.crabs.length;
         } else {
+            this.playSfx('sfx_move');
             animate();
         }
         this.refreshActiveCrab();
+    }
+
+    private playSfx(key: string) {
+        if (this.cache.audio.has(key)) {
+            this.sound.play(key);
+        }
+    }
+
+    // Shrink a crab's sprite away once it has reached the exit, with a cartoony
+    // anticipation (a little puff up) before it vanishes. The sprite has already
+    // been removed from the crab list, so it just animates and destroys itself.
+    private shrinkAway(sprite: GameObjects.Sprite) {
+        this.tweens.add({
+            targets: sprite,
+            scale: 0,
+            duration: EXIT_SHRINK_MS,
+            ease: 'Back.easeIn',
+            onComplete: () => sprite.destroy(),
+        });
+    }
+
+    // Nudge a blocked crab a little in the attempted direction and let it spring
+    // back, for a bit of "thwarted" feedback.
+    private bounceCrab(crab: Crab, dx: number, dy: number) {
+        const base = this.crabTarget(crab);
+        const nudge = this.tileWidth * 0.2;
+        this.stopCrabTween(crab);
+        crab.sprite.setPosition(base.x, base.y);
+        crab.tween = this.tweens.add({
+            targets: crab.sprite,
+            x: base.x + dx * nudge,
+            y: base.y + dy * nudge,
+            duration: 90,
+            ease: 'Quad.easeOut',
+            yoyo: true,
+        });
     }
 
     // The two orthogonal directions a diagonal tile opens onto (its floor side),

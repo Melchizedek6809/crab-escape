@@ -17,7 +17,7 @@ const main = () => {
         height: 720,
         //pixelArt: true,
         parent: document.getElementById('phaser-parent') as HTMLElement,
-        title: 'Vite / Phaser / TypeScript starter template',
+        title: 'Crab Escape',
         backgroundColor: '#000',
         dom: {
             createContainer: true,

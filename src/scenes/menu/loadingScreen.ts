@@ -102,10 +102,14 @@ export class LoadingScreenScene extends Scene {
         this.initLoadScreen();
         this.load.multiatlas('packed', 'gfx/packed.json', 'gfx');
 
-        //this.load.audio('shot', 'sfx/shot.wav');
+        this.load.audio('sfx_move', 'sfx/Anime_Motion34-2(Short-Low).mp3');
+        this.load.audio('sfx_push', 'sfx/Motion-Agility05-1.mp3');
+        this.load.audio('sfx_door', 'sfx/Retro_Anime-Switch02-1(Mid).mp3');
+        this.load.audio('sfx_blocked', 'sfx/Anime_Motion25-1.mp3');
+        this.load.audio('sfx_crab_exit', 'sfx/Business15-2(Fast-Mid).mp3');
+        this.load.audio('sfx_level_complete', 'sfx/Multi_Accent12-1(Mid).mp3');
         if (options.playBGM) {
-            //this.load.audio('bgm', 'bgm/bgm.mp3');
-            //this.load.audio('menubgm', 'bgm/menubgm.mp3');
+            this.load.audio('bgm', 'sfx/Oato_Ga_Yoroshiiyode-1.mp3');
         }
     }
 

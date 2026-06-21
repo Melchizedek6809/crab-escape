@@ -2,6 +2,8 @@ export class Options {
     skipMenu = false;
     showCollider = false;
     playBGM = true;
+    // Level to start on, e.g. ?level=5. Empty means the first level.
+    startLevel = '';
 
     private parseBoolean(def: boolean, paramValue: string | null): boolean {
         if (paramValue === null) {
@@ -31,6 +33,7 @@ export class Options {
             params.get('showCollider'),
         );
         this.playBGM = this.parseBoolean(this.playBGM, params.get('playBGM'));
+        this.startLevel = (params.get('level') ?? this.startLevel).trim();
     }
 }
 
