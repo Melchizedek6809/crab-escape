@@ -1,6 +1,6 @@
-# PhaserJS + Typescript
+# Crab Escape
 
-A simple starter template/example for PhaserJS and TypeScript.
+A puzzle game for the Trijam #377, theme was crabs so my idea was a puzzle game where you need to help crabs that can only move sideways escape.
 
 ## Requirements
 - Node JS (v24+) with PNPM
@@ -8,7 +8,7 @@ A simple starter template/example for PhaserJS and TypeScript.
 ## Setup
 
 ```bash
-npm install
+pnpm install
 ```
 
 ## Development (VS Code)
@@ -24,11 +24,11 @@ Edit the TypeScript files, the browser should automatically refresh after saving
 
 You can also start the development server by executing the following command within the repo:
 ```bash
-npm run dev
+pnpm dev
 ```
 
 You should then see the example in your Browser on http://localhost:5137/
 
 ## Publish to itch.io / Ludum Dare
 
-You can create a zip file in a format that should work with both itch.io and Ludum Dare by running the following command :`npm run zip`
+You can create a zip file in a format that should work with both itch.io and Ludum Dare by running the following command :`pnpm run zip`

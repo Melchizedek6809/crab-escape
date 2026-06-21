@@ -212,7 +212,7 @@ export class GameScene extends Scene {
         // user input, so playback begins once the player interacts).
         if (options.playBGM && this.cache.audio.has('bgm')) {
             this.bgm = this.sound.add('bgm', { loop: true });
-            this.bgm.play();
+            this.bgm.play(undefined, { loop: true });
         }
 
         const ui = this.scene.get('UIScene') as UIScene;
